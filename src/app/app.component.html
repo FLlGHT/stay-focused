@@ -1,6 +1,4 @@
-<h1>{{ isSignedIn ? "Signed in!" : "Signed out :(" }}</h1>
-
-<button *ngIf="isSignedIn" (click)="handleSignOut()">Sign Out</button>
-<button *ngIf="!isSignedIn" (click)="handleAuth()">Sign In</button>
-
-<pre *ngIf="isSignedIn">{{ events }}</pre>
+<div>
+  <app-navigation></app-navigation>
+  <router-outlet></router-outlet>
+</div>

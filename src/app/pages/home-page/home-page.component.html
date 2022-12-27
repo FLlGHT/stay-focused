@@ -1,0 +1,45 @@
+<div class="container">
+
+  <div class="row p-3">
+  <form class="col-5" [formGroup]="dateForm" (ngSubmit)="onSubmit()">
+    <div class="d-flex">
+
+      <div class="me-2">
+        <label>Start date</label>
+        <input formControlName="startDate" class="form-control" type="date" placeholder="dd-mm-yyyy">
+      </div>
+
+      <div>
+        <label>End date</label>
+        <input formControlName="endDate" class="form-control" type="date" placeholder="dd-mm-yyyy">
+      </div>
+
+      <button class="btn btn-warning align-content-center mx-2 h-50 align-self-end">Show</button>
+    </div>
+  </form>
+    <div class="col-7 px-5">
+      <p class="mb-1">Info: </p>
+      <div *ngIf="stats" class="d-flex">
+        <p class="px-2">{{'Total time: ' + stats.totalTime}} </p>
+        <p class="px-2">{{'Productive time: ' + stats.productiveTime}} </p>
+        <p class="px-2">{{'Percentage: ' + stats.percentage}}</p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p>Events: </p>
+    <div *ngIf="authService.isSignedIn" class="row row-cols-3 g-3">
+      <div *ngFor="let event of events | keyvalue : withoutComparison">
+        <div class="col card">
+          <div class="card-body">
+            <p>{{'Name: ' + event.key}}</p>
+            <p>{{'Total: ' + event.value}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

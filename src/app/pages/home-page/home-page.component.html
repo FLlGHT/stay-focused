@@ -1,8 +1,9 @@
 <div class="container">
 
-  <div class="row py-3">
-    <form class="col-5" [formGroup]="dateForm" (ngSubmit)="onSubmit()">
-      <div class="d-flex">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 py-3 g-3">
+    <form class="col" [formGroup]="dateForm" (ngSubmit)="onSubmit()">
+      <h3 class="text-secondary">Settings</h3>
+      <div class="d-flex py-2">
 
         <div class="me-2">
           <label>Start date</label>
@@ -30,26 +31,29 @@
       </div>
 
     </form>
-    <div class="col-7 px-5">
-      <p class="mb-1">Info: </p>
-      <div *ngIf="stats" class="d-flex">
-        <p class="px-2">{{'Total time: ' + stats.totalTime + ' min'}} </p>
-        <p class="px-2">{{'Productive time: ' + stats.productiveTime + ' min'}} </p>
-        <p class="px-2">{{'Percentage: ' + (stats.percentage | percent)}}</p>
+    <div class="col px-5">
+      <h3 class="mb-0 text-secondary">Info </h3>
+      <div *ngIf="stats" >
+        <h5 class="px-2 mb-0 pt-3">Total time: <span class="text-warning">{{stats.totalTime + ' min'}}</span></h5>
+        <h5 class="px-2 mb-0">Productive time: <span class="text-warning">{{stats.productiveTime + ' min'}}</span></h5>
+        <h5 class="px-2">Percentage: <span class="text-warning">{{(stats.percentage | percent)}}</span></h5>
       </div>
     </div>
   </div>
 
   <div class="py-5">
-    <h3 class="text-secondary">By events: </h3>
-    <div *ngIf="authService.isSignedIn" class="row row-cols-5 g-3">
-      <div *ngFor="let event of events | keyvalue : withoutComparison">
-        <div class="col card bg-gradient bg-dark">
-          <div class="card-body">
-            <div class="d-flex">
+    <h3 class="text-secondary">By events </h3>
+    <div *ngIf="authService.isSignedIn" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
+      <div *ngFor="let event of events | keyvalue : withoutComparison; let i = index">
+        <div class="col card bg-gradient bg-dark shadow-lg">
+          <div class="card-header">
+            <p class="text-secondary mb-0">{{'#' + (i + 1)}}</p>
+          </div>
+          <div class="card-body text-truncate">
+            <div>
               <h3>{{event.key}}</h3>
             </div>
-            <p>{{'Total: ' + event.value}}</p>
+            <p>{{event.value + ' min'}}</p>
           </div>
         </div>
       </div>
@@ -57,16 +61,16 @@
   </div>
 
   <div class="py-5">
-    <h3 class="text-secondary">By categories: </h3>
-    <div *ngIf="authService.isSignedIn" class="row row-cols-5 g-3">
+    <h3 class="text-secondary">By categories </h3>
+    <div *ngIf="authService.isSignedIn" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
       <div *ngFor="let category of categories | keyvalue : withoutComparison">
-        <div class="col card bg-gradient bg-dark">
-          <div class="card-body">
+        <div class="col card bg-gradient bg-dark shadow-lg">
+          <div class="card-body text-truncate">
             <div class="d-flex">
               <p class="p-3 me-2 rounded-circle" [style]="colorStyle(category.key)"></p>
               <h3>{{colorInfo(category.key)?.name}}</h3>
             </div>
-            <p>{{'Total: ' + category.value}}</p>
+            <p>{{category.value + ' min'}}</p>
           </div>
         </div>
       </div>

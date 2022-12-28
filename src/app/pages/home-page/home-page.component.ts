@@ -21,7 +21,8 @@ export class HomePageComponent implements OnInit {
 
   dateForm = new FormGroup({
     startDate: new FormControl(),
-    endDate: new FormControl()
+    endDate: new FormControl(),
+    endControl: new FormControl()
   });
 
   constructor(public authService: AuthService, private zone: NgZone) {
@@ -32,8 +33,13 @@ export class HomePageComponent implements OnInit {
       if (isAuth)
         this.loadEvents(new Date(), new Date())
       else
-        this.events = undefined
+        this.clearView()
     })
+  }
+
+  clearView() {
+    this.events = undefined
+    this.categories = undefined
   }
 
   atStartOfDay(date: Date) : Date {
@@ -73,15 +79,15 @@ export class HomePageComponent implements OnInit {
       let eventMap = new Map(), categoryMap = new Map()
 
       for (const event of events) {
-        let color : Color | undefined = COLORS.get(event.colorId)
+        let color = event.colorId
         let name = event.summary;
         let duration = this.duration(event.start.dateTime, event.end.dateTime)
 
         let eventTotal = eventMap.get(name) ? eventMap.get(name) : 0
         eventMap.set(name, eventTotal + duration)
 
-        let categoryTotal = categoryMap.get(color?.name) ? categoryMap.get(color?.name) : 0
-        categoryMap.set(color?.name, categoryTotal + duration)
+        let categoryTotal = categoryMap.get(color) ? categoryMap.get(color) : 0
+        categoryMap.set(color, categoryTotal + duration)
       }
 
       this.events = new Map([...eventMap.entries()].sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1]))
@@ -107,12 +113,23 @@ export class HomePageComponent implements OnInit {
     let value = this.dateForm.value
     let from = value.startDate
     let to = value.endDate ? value.endDate : new Date()
-    this.events = undefined
+
+    let endControl = value.endControl
+    console.log('currently: ' + endControl)
 
     this.loadEvents(from, to)
   }
 
   withoutComparison() {
     return 0
+  }
+
+  colorInfo(colorId: string) : Color | undefined {
+    return COLORS.get(colorId)
+  }
+
+  colorStyle(colorId: string) : string {
+    let color = this.colorInfo(colorId)
+    return "background-color: " + color?.color
   }
 }

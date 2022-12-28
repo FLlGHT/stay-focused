@@ -1,4 +1,4 @@
-<header class="p-3 text-bg-dark">
+<header class="p-3 text-bg-dark bg-gradient">
   <div class="container">
     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 
@@ -12,7 +12,7 @@
       <div class="d-flex">
         <p *ngIf="isAuthenticated" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none px-2">{{getFullName()}}</p>
         <button *ngIf="!isAuthenticated" (click)="authService.handleAuth()" class="btn btn-warning">Sign-up</button>
-        <button *ngIf="isAuthenticated" (click)="authService.handleSignOut()" class="btn btn-outline-info">Sign Out
+        <button *ngIf="isAuthenticated" (click)="authService.handleSignOut()" class="btn btn-outline-warning">Sign Out
         </button>
       </div>
     </div>

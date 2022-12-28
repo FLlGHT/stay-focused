@@ -2,6 +2,7 @@ import {Component, NgZone, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {FormControl, FormGroup} from "@angular/forms";
 import {Stats} from "../../models/stats";
+import {Color, COLORS} from "../../models/colors";
 
 @Component({
   selector: 'app-home-page',
@@ -12,7 +13,11 @@ export class HomePageComponent implements OnInit {
 
   events : Map<string, number> | undefined
 
+  categories: Map<string, number> | undefined
+
   stats : Stats | undefined = undefined
+
+  SLEEP_TIME_RATIO = 0.33
 
   dateForm = new FormGroup({
     startDate: new FormControl(),
@@ -31,23 +36,20 @@ export class HomePageComponent implements OnInit {
     })
   }
 
-  atStartOfDay(date: Date) : string {
+  atStartOfDay(date: Date) : Date {
     let start = new Date(date)
     start.setHours(0, 0, 0, 0)
-    return start.toISOString()
+    return start
   }
 
-  atEndOfDay(date: Date) : string {
+  atEndOfDay(date: Date) : Date {
     let end = new Date(date)
     end.setHours(23, 59, 59, 999)
-    return end.toISOString()
+    return end
   }
 
   duration(from: Date, to: Date) : number {
-    console.log('duration between ' + from + ' and ' + to)
     let difference = new Date(to).getTime() - new Date(from).getTime()
-    console.log('diff is ' + difference)
-
     return Math.round(difference / 60000)
   }
 
@@ -55,30 +57,36 @@ export class HomePageComponent implements OnInit {
     this.authService.getGapi().client.calendar.events
       .list({
         calendarId: 'primary',
-        timeMin: this.atStartOfDay(from),
-        timeMax: this.atEndOfDay(to),
+        timeMin: this.atStartOfDay(from).toISOString(),
+        timeMax: this.atEndOfDay(to).toISOString(),
         singleEvents: true,
         orderBy: 'startTime',
       })
       .then((response: any) => {
-        this.updateEvents(response)
-        this.updateStats(from, to)
+        this.updateEvents(response, from, to)
       });
   }
 
-  updateEvents(response: any) {
+  updateEvents(response: any, from : Date, to: Date) {
     this.zone.run(() => {
       const events = response.result.items;
-      let map = new Map()
+      let eventMap = new Map(), categoryMap = new Map()
 
       for (const event of events) {
+        let color : Color | undefined = COLORS.get(event.colorId)
         let name = event.summary;
         let duration = this.duration(event.start.dateTime, event.end.dateTime)
-        let current = map.get(name) ? map.get(name) : 0
-        map.set(name, current + duration)
+
+        let eventTotal = eventMap.get(name) ? eventMap.get(name) : 0
+        eventMap.set(name, eventTotal + duration)
+
+        let categoryTotal = categoryMap.get(color?.name) ? categoryMap.get(color?.name) : 0
+        categoryMap.set(color?.name, categoryTotal + duration)
       }
 
-      this.events = new Map([...map.entries()].sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1]))
+      this.events = new Map([...eventMap.entries()].sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1]))
+      this.categories = new Map([...categoryMap.entries()].sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1]))
+      this.updateStats(from, to)
     });
   }
 
@@ -91,7 +99,7 @@ export class HomePageComponent implements OnInit {
       }
     }
 
-    let totalTime = this.duration(new Date(from), new Date(to))
+    let totalTime = Math.floor(this.duration(this.atStartOfDay(from), this.atEndOfDay(to)) * (1 - this.SLEEP_TIME_RATIO))
     this.stats = {totalTime: totalTime, productiveTime: productiveTime, percentage: productiveTime / totalTime}
   }
 

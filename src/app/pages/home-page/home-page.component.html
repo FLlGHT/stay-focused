@@ -1,37 +1,39 @@
 <div class="container">
 
-  <div class="row p-3">
-  <form class="col-5" [formGroup]="dateForm" (ngSubmit)="onSubmit()">
-    <div class="d-flex">
+  <div class="row py-3">
+    <form class="col-5" [formGroup]="dateForm" (ngSubmit)="onSubmit()">
+      <div class="d-flex">
 
-      <div class="me-2">
-        <label>Start date</label>
-        <input formControlName="startDate" class="form-control" type="date" placeholder="dd-mm-yyyy">
+        <div class="me-2">
+          <label>Start date</label>
+          <input formControlName="startDate" class="form-control bg-dark bg-gradient text-light" type="date"
+                 placeholder="dd-mm-yyyy">
+        </div>
+
+        <div>
+          <label>End date</label>
+          <input formControlName="endDate" class="form-control bg-dark bg-gradient text-light" type="date"
+                 placeholder="dd-mm-yyyy">
+        </div>
+
+        <button class="btn btn-warning align-content-center mx-2 h-50 align-self-end">Show</button>
       </div>
-
-      <div>
-        <label>End date</label>
-        <input formControlName="endDate" class="form-control" type="date" placeholder="dd-mm-yyyy">
-      </div>
-
-      <button class="btn btn-warning align-content-center mx-2 h-50 align-self-end">Show</button>
-    </div>
-  </form>
+    </form>
     <div class="col-7 px-5">
       <p class="mb-1">Info: </p>
       <div *ngIf="stats" class="d-flex">
-        <p class="px-2">{{'Total time: ' + stats.totalTime}} </p>
-        <p class="px-2">{{'Productive time: ' + stats.productiveTime}} </p>
-        <p class="px-2">{{'Percentage: ' + stats.percentage}}</p>
+        <p class="px-2">{{'Total time: ' + stats.totalTime + ' min'}} </p>
+        <p class="px-2">{{'Productive time: ' + stats.productiveTime + ' min'}} </p>
+        <p class="px-2">{{'Percentage: ' + (stats.percentage | percent)}}</p>
       </div>
     </div>
   </div>
 
-  <div>
-    <p>Events: </p>
+  <div class="py-5">
+    <p>By events: </p>
     <div *ngIf="authService.isSignedIn" class="row row-cols-3 g-3">
       <div *ngFor="let event of events | keyvalue : withoutComparison">
-        <div class="col card">
+        <div class="col card bg-gradient bg-dark">
           <div class="card-body">
             <p>{{'Name: ' + event.key}}</p>
             <p>{{'Total: ' + event.value}}</p>
@@ -41,5 +43,17 @@
     </div>
   </div>
 
-
+  <div class="py-5">
+    <p>By categories: </p>
+    <div *ngIf="authService.isSignedIn" class="row row-cols-3 g-3">
+      <div *ngFor="let category of categories | keyvalue : withoutComparison">
+        <div class="col card bg-gradient bg-dark">
+          <div class="card-body">
+            <p>{{'Name: ' + category.key}}</p>
+            <p>{{'Total: ' + category.value}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -4,13 +4,13 @@
 
     <div class="me-2">
       <label>Start date</label>
-      <input formControlName="startDate" class="form-control bg-dark bg-gradient text-light" type="date"
+      <input formControlName="startDate" class="px-3 form-control bg-dark bg-gradient text-light" type="date"
              placeholder="dd-mm-yyyy">
     </div>
 
     <div>
       <label>End date</label>
-      <input formControlName="endDate" class="form-control bg-dark bg-gradient text-light" type="date"
+      <input formControlName="endDate" class="px-3 form-control bg-dark bg-gradient text-light" type="date"
              placeholder="dd-mm-yyyy">
     </div>
 
@@ -20,10 +20,10 @@
   <div class="d-flex mt-2">
     <div class="btn-group" role="group" [ngStyle]="visibilityStyle()">
       <input formControlName="endControl" type="radio" class="btn-check" value="currently" id="radio1">
-      <label class="btn btn-outline-warning" for="radio1">Currently</label>
+      <label class="btn btn-outline-warning px-5" for="radio1">Currently</label>
 
       <input formControlName="endControl" type="radio" class="btn-check" value="midnight" id="radio2">
-      <label class="btn btn-outline-warning" for="radio2">Midnight</label>
+      <label class="btn btn-outline-warning px-5" for="radio2">Midnight</label>
     </div>
   </div>
 

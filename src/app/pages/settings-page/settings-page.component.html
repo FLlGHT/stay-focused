@@ -11,9 +11,9 @@
           <p class="ms-2 mt-1 py-2">Sleep hours<span class="ms-2 text-warning">{{sleepRangeMessage}}</span></p>
           <form [formGroup]="sleepRangeForm" (change)="saveSleepRangeForm()">
             <div class="d-flex m-2 pb-2">
-              <input formControlName="timeFrom" type="text" class="form-control bg-dark bg-gradient text-light"
+              <input formControlName="sleepFrom" type="text" class="form-control bg-dark bg-gradient text-light"
                      placeholder="22:00">
-              <input formControlName="timeTo" type="text" class="form-control bg-dark bg-gradient text-light"
+              <input formControlName="sleepTo" type="text" class="form-control bg-dark bg-gradient text-light"
                      placeholder="6:00">
             </div>
           </form>
@@ -24,7 +24,7 @@
         <div class="card bg-gradient bg-dark">
           <p class="ms-2 py-2">Category mapping<span class="ms-2 text-warning">{{categoriesMessage}}</span></p>
 
-          <div class="row row-cols-2">
+          <div class="row row-cols-lg-2">
             <div *ngFor="let category of categories | keyvalue">
               <div class="col card bg-dark bg-gradient p-2">
                 <div class="me-2 row">

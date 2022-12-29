@@ -15,8 +15,8 @@ export class SettingsPageComponent implements OnInit {
   categories: Map<string | undefined, string> = new Map<string | undefined, string>()
 
   sleepRangeForm = new FormGroup({
-    timeFrom: new FormControl(localStorage.getItem('timeFrom')),
-    timeTo: new FormControl(localStorage.getItem('timeTo')),
+    sleepFrom: new FormControl(localStorage.getItem('sleepFrom')),
+    sleepTo: new FormControl(localStorage.getItem('sleepTo')),
   });
 
   ngOnInit(): void {
@@ -32,21 +32,21 @@ export class SettingsPageComponent implements OnInit {
     let isValidTo = regular.test(to);
 
     if (!isValidFrom)
-      this.sleepRangeForm.get('timeFrom')?.setValue('')
+      this.sleepRangeForm.get('sleepFrom')?.setValue('')
 
     if (!isValidTo)
-      this.sleepRangeForm.get('timeTo')?.setValue('')
+      this.sleepRangeForm.get('sleepTo')?.setValue('')
 
     return isValidFrom && isValidTo
   }
 
   saveSleepRangeForm() {
     let value = this.sleepRangeForm.value
-    let from = value.timeFrom, to = value.timeTo
+    let from = value.sleepFrom, to = value.sleepTo
 
     if (from && to && this.isValidTime(from, to)) {
-      localStorage.setItem('timeFrom', from)
-      localStorage.setItem('timeTo', to)
+      localStorage.setItem('sleepFrom', from)
+      localStorage.setItem('sleepTo', to)
 
       this.sleepRangeMessage = 'Sleep time updated successfully'
       setTimeout(() => this.sleepRangeMessage = '', 5000)

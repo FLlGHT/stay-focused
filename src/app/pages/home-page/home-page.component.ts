@@ -14,7 +14,6 @@ export class HomePageComponent implements OnInit {
   events : Map<string, number> | undefined
   categories: Map<string, number> | undefined
   stats : Stats | undefined = undefined
-  SLEEP_TIME_RATIO = 0.333
 
   constructor(public authService: AuthService, private eventsService: EventsService, private zone: NgZone) {}
   ngOnInit(): void {
@@ -87,8 +86,10 @@ export class HomePageComponent implements OnInit {
       }
     }
 
-    console.log('from' + from + ' to' + to)
-    let totalTime = Math.floor(this.duration(from, to) * (1 - this.SLEEP_TIME_RATIO))
+    let sleepRatio = 0.333
+
+    let totalTime = this.isCurrently(from, to) ?
+      this.duration(from, to) : Math.floor(this.duration(from, to) * (1 - sleepRatio))
     this.stats = {totalTime: totalTime, productiveTime: productiveTime, percentage: productiveTime / totalTime}
   }
 
@@ -99,5 +100,9 @@ export class HomePageComponent implements OnInit {
   onSettingsSubmit(event: any) {
     if (event.from && event.to)
       this.loadEvents(event.from, event.to)
+  }
+
+  isCurrently(from: Date, to: Date) : boolean {
+    return from.getHours() > 0 && new Date(from).toDateString() === new Date(to).toDateString()
   }
 }

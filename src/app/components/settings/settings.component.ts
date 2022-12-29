@@ -33,10 +33,20 @@ export class SettingsComponent {
     let from = this.atStartOfDay(settings.startDate ? settings.startDate : new Date())
     let to = this.atEndOfDay(settings.endDate ? settings.endDate : new Date())
 
-    if (this.isEndSettingsVisible() && endType && endType === 'currently')
+    let sleepFrom = localStorage.getItem('sleepFrom')
+    let sleepTo = localStorage.getItem('sleepTo')
+
+    if (this.isEndSettingsVisible() && endType && endType === 'currently') {
       to.setTime(new Date().getTime())
 
+      if (new Date(from).toDateString() === new Date().toDateString() && sleepTo) {
+        from.setHours(parseInt(sleepTo.slice(0, sleepTo.indexOf(':'))))
+        from.setMinutes(parseInt(sleepTo.slice(sleepTo.indexOf(':') + 1)))
+      }
+    }
+
     let range : Range = {from: from, to: to}
+    console.log(range)
     this.submit.emit(range)
   }
 

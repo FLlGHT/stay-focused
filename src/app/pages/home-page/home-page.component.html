@@ -1,78 +1,26 @@
 <div class="container">
 
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 py-3 g-3">
-    <form class="col" [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
-      <h3 class="text-secondary">Settings</h3>
-      <div class="d-flex py-2">
 
-        <div class="me-2">
-          <label>Start date</label>
-          <input formControlName="startDate" class="form-control bg-dark bg-gradient text-light" type="date"
-                 placeholder="dd-mm-yyyy">
-        </div>
+    <app-settings (submit)=onSettingsSubmit($event)></app-settings>
+    <app-summary [stats]="stats"></app-summary>
 
-        <div>
-          <label>End date</label>
-          <input formControlName="endDate" class="form-control bg-dark bg-gradient text-light" type="date"
-                 placeholder="dd-mm-yyyy">
-        </div>
-
-        <button class="btn btn-warning align-content-center mx-2 h-50 align-self-end">Show</button>
-      </div>
-
-      <div class="d-flex mt-2">
-        <div class="btn-group" role="group" [ngStyle]="visibilityStyle()">
-          <input formControlName="endControl" type="radio" class="btn-check" value="currently" id="radio1">
-          <label class="btn btn-outline-warning" for="radio1">Currently</label>
-
-          <input formControlName="endControl" type="radio" class="btn-check" value="midnight" id="radio2">
-          <label class="btn btn-outline-warning" for="radio2">Midnight</label>
-        </div>
-      </div>
-
-    </form>
-    <div class="col px-5">
-      <h3 class="mb-0 text-secondary">Info </h3>
-      <div *ngIf="stats" >
-        <h5 class="px-2 mb-0 pt-3">Total time: <span class="text-warning">{{stats.totalTime + ' min'}}</span></h5>
-        <h5 class="px-2 mb-0">Productive time: <span class="text-warning">{{stats.productiveTime + ' min'}}</span></h5>
-        <h5 class="px-2">Percentage: <span class="text-warning">{{(stats.percentage | percent)}}</span></h5>
-      </div>
-    </div>
   </div>
 
   <div class="py-5">
-    <h3 class="text-secondary">By events </h3>
-    <div *ngIf="authService.isSignedIn" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
+    <h3 *ngIf="events" class="text-secondary">By events </h3>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
       <div *ngFor="let event of events | keyvalue : withoutComparison; let i = index">
-        <div class="col card bg-gradient bg-dark shadow-lg">
-          <div class="card-header">
-            <p class="text-secondary mb-0">{{'#' + (i + 1)}}</p>
-          </div>
-          <div class="card-body text-truncate">
-            <div>
-              <h3>{{event.key}}</h3>
-            </div>
-            <p>{{event.value + ' min'}}</p>
-          </div>
-        </div>
+        <app-event [event]="event" [index]="i + 1"></app-event>
       </div>
     </div>
   </div>
 
   <div class="py-5">
-    <h3 class="text-secondary">By categories </h3>
-    <div *ngIf="authService.isSignedIn" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
+    <h3 *ngIf="categories" class="text-secondary">By categories </h3>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
       <div *ngFor="let category of categories | keyvalue : withoutComparison">
-        <div class="col card bg-gradient bg-dark shadow-lg">
-          <div class="card-body text-truncate">
-            <div class="d-flex">
-              <p class="p-3 me-2 rounded-circle" [style]="colorStyle(category.key)"></p>
-              <h3>{{colorInfo(category.key)?.name}}</h3>
-            </div>
-            <p>{{category.value + ' min'}}</p>
-          </div>
-        </div>
+        <app-category [category]="category"></app-category>
       </div>
     </div>
   </div>

@@ -1,6 +1,7 @@
 import {Injectable, NgZone} from '@angular/core';
-import {BehaviorSubject, Observable, of, Subject} from "rxjs";
+import {BehaviorSubject} from "rxjs";
 import {Profile} from "../models/profile";
+import {environment} from "../../environments/environments";
 
 declare let gapi : any
 
@@ -9,15 +10,8 @@ declare let gapi : any
 })
 export class AuthService {
 
-  CLIENT_ID = '74526733780-olcqqqepah4b98m2ehqsf9tim3p7l1tu.apps.googleusercontent.com'
-  API_KEY = 'AIzaSyAxpo3iI7siUajbBa6YZ66y7QsM_s3VpI8'
-  DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest']
-  SCOPE = 'https://www.googleapis.com/auth/calendar.readonly'
   isSignedIn = false;
-
   profile: Profile | undefined
-
-
   isAuthenticated$ = new BehaviorSubject<boolean>(false)
 
   constructor(private zone: NgZone) {
@@ -28,10 +22,10 @@ export class AuthService {
     const updateSignInStatus = this.updateSignInStatus.bind(this);
     gapi.client
       .init({
-        apiKey: this.API_KEY,
-        clientId: this.CLIENT_ID,
-        discoveryDocs: this.DISCOVERY_DOCS,
-        scope: this.SCOPE,
+        apiKey: environment.API_KEY,
+        clientId: environment.CLIENT_ID,
+        discoveryDocs: environment.DISCOVERY_DOCS,
+        scope: environment.SCOPE,
         plugin_name: 'sf app'
       })
       .then(() => {
@@ -76,14 +70,12 @@ export class AuthService {
   updateUserInfo() {
     let googleProfile = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
 
-    let profile : Profile = {
-      id : googleProfile.getId(),
-      firstName : googleProfile.getGivenName(),
-      lastName : googleProfile.getFamilyName(),
+    this.profile = {
+      id: googleProfile.getId(),
+      firstName: googleProfile.getGivenName(),
+      lastName: googleProfile.getFamilyName(),
       image: googleProfile.getImageUrl(),
       email: googleProfile.getEmail()
     }
-
-    this.profile = profile
   }
 }

@@ -12,14 +12,11 @@ import {Color, COLORS} from "../../models/colors";
 export class HomePageComponent implements OnInit {
 
   events : Map<string, number> | undefined
-
   categories: Map<string, number> | undefined
-
   stats : Stats | undefined = undefined
+  SLEEP_TIME_RATIO = 0.333
 
-  SLEEP_TIME_RATIO = 0.33
-
-  dateForm = new FormGroup({
+  settingsForm = new FormGroup({
     startDate: new FormControl(),
     endDate: new FormControl(),
     endControl: new FormControl()
@@ -31,7 +28,7 @@ export class HomePageComponent implements OnInit {
   ngOnInit(): void {
     this.authService.isAuthenticated$.subscribe(isAuth => {
       if (isAuth)
-        this.loadEvents(new Date(), new Date())
+        this.loadEvents(this.atStartOfDay(new Date()), this.atEndOfDay(new Date()))
       else
         this.clearView()
     })
@@ -63,8 +60,8 @@ export class HomePageComponent implements OnInit {
     this.authService.getGapi().client.calendar.events
       .list({
         calendarId: 'primary',
-        timeMin: this.atStartOfDay(from).toISOString(),
-        timeMax: this.atEndOfDay(to).toISOString(),
+        timeMin: from.toISOString(),
+        timeMax: to.toISOString(),
         singleEvents: true,
         orderBy: 'startTime',
       })
@@ -105,17 +102,20 @@ export class HomePageComponent implements OnInit {
       }
     }
 
-    let totalTime = Math.floor(this.duration(this.atStartOfDay(from), this.atEndOfDay(to)) * (1 - this.SLEEP_TIME_RATIO))
+    console.log('from' + from + ' to' + to)
+    let totalTime = Math.floor(this.duration(from, to) * (1 - this.SLEEP_TIME_RATIO))
     this.stats = {totalTime: totalTime, productiveTime: productiveTime, percentage: productiveTime / totalTime}
   }
 
   onSubmit() {
-    let value = this.dateForm.value
-    let from = value.startDate
-    let to = value.endDate ? value.endDate : new Date()
+    let settings = this.settingsForm.value
+    let endType = settings.endControl
 
-    let endControl = value.endControl
-    console.log('currently: ' + endControl)
+    let from = this.atStartOfDay(settings.startDate ? settings.startDate : new Date())
+    let to = this.atEndOfDay(settings.endDate ? settings.endDate : new Date())
+
+    if (this.isEndSettingsVisible() && endType && endType === 'currently')
+      to.setTime(new Date().getTime())
 
     this.loadEvents(from, to)
   }
@@ -132,4 +132,14 @@ export class HomePageComponent implements OnInit {
     let color = this.colorInfo(colorId)
     return "background-color: " + color?.color
   }
+
+  isEndSettingsVisible() : boolean {
+    let value = this.settingsForm.value.endDate
+    return (value && new Date(value).toDateString() === new Date().toDateString())
+  }
+
+  visibilityStyle() {
+    return {'visibility' : this.isEndSettingsVisible() ? 'visible' : 'hidden'}
+  }
+
 }

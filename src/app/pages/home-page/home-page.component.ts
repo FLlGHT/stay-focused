@@ -1,8 +1,8 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
-import {FormControl, FormGroup} from "@angular/forms";
 import {Stats} from "../../models/stats";
 import {Color, COLORS} from "../../models/colors";
+import {EventsService} from "../../services/events.service";
 
 @Component({
   selector: 'app-home-page',
@@ -16,15 +16,7 @@ export class HomePageComponent implements OnInit {
   stats : Stats | undefined = undefined
   SLEEP_TIME_RATIO = 0.333
 
-  settingsForm = new FormGroup({
-    startDate: new FormControl(),
-    endDate: new FormControl(),
-    endControl: new FormControl()
-  });
-
-  constructor(public authService: AuthService, private zone: NgZone) {
-
-  }
+  constructor(public authService: AuthService, private eventsService: EventsService, private zone: NgZone) {}
   ngOnInit(): void {
     this.authService.isAuthenticated$.subscribe(isAuth => {
       if (isAuth)
@@ -57,14 +49,7 @@ export class HomePageComponent implements OnInit {
   }
 
   loadEvents(from: Date, to: Date) {
-    this.authService.getGapi().client.calendar.events
-      .list({
-        calendarId: 'primary',
-        timeMin: from.toISOString(),
-        timeMax: to.toISOString(),
-        singleEvents: true,
-        orderBy: 'startTime',
-      })
+    this.eventsService.getEvents(from, to)
       .then((response: any) => {
         this.updateEvents(response, from, to)
       });
@@ -107,39 +92,12 @@ export class HomePageComponent implements OnInit {
     this.stats = {totalTime: totalTime, productiveTime: productiveTime, percentage: productiveTime / totalTime}
   }
 
-  onSubmit() {
-    let settings = this.settingsForm.value
-    let endType = settings.endControl
-
-    let from = this.atStartOfDay(settings.startDate ? settings.startDate : new Date())
-    let to = this.atEndOfDay(settings.endDate ? settings.endDate : new Date())
-
-    if (this.isEndSettingsVisible() && endType && endType === 'currently')
-      to.setTime(new Date().getTime())
-
-    this.loadEvents(from, to)
-  }
-
   withoutComparison() {
     return 0
   }
 
-  colorInfo(colorId: string) : Color | undefined {
-    return COLORS.get(colorId)
+  onSettingsSubmit(event: any) {
+    if (event.from && event.to)
+      this.loadEvents(event.from, event.to)
   }
-
-  colorStyle(colorId: string) : string {
-    let color = this.colorInfo(colorId)
-    return "background-color: " + color?.color
-  }
-
-  isEndSettingsVisible() : boolean {
-    let value = this.settingsForm.value.endDate
-    return (value && new Date(value).toDateString() === new Date().toDateString())
-  }
-
-  visibilityStyle() {
-    return {'visibility' : this.isEndSettingsVisible() ? 'visible' : 'hidden'}
-  }
-
 }

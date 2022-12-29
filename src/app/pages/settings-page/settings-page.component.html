@@ -1,0 +1,46 @@
+<div class="container">
+  <main>
+    <div class="py-5 text-center">
+      <h3>Settings</h3>
+      <p class="lead">On this page you can personalize the application for yourself</p>
+    </div>
+
+    <div class="row g-5">
+      <div class="col-md-5 col-lg-4 order-md-last">
+        <div class="card bg-gradient bg-dark">
+          <p class="ms-2 mt-1 py-2">Sleep hours<span class="ms-2 text-warning">{{sleepRangeMessage}}</span></p>
+          <form [formGroup]="sleepRangeForm" (change)="saveSleepRangeForm()">
+            <div class="d-flex m-2 pb-2">
+              <input formControlName="timeFrom" type="text" class="form-control bg-dark bg-gradient text-light"
+                     placeholder="22:00">
+              <input formControlName="timeTo" type="text" class="form-control bg-dark bg-gradient text-light"
+                     placeholder="6:00">
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-md-7 col-lg-8">
+        <div class="card bg-gradient bg-dark">
+          <p class="ms-2 py-2">Category mapping<span class="ms-2 text-warning">{{categoriesMessage}}</span></p>
+
+          <div class="row row-cols-2">
+            <div *ngFor="let category of categories | keyvalue">
+              <div class="col card bg-dark bg-gradient p-2">
+                <div class="me-2 row">
+                  <p class="col-4">{{getColor(category.key)}}</p>
+                  <h3 class="col-1 p-3 rounded-circle" [style]="colorStyle(category.key)"></h3>
+                  <input #inputElement type="text" class="ms-2 col-6 bg-dark bg-gradient text-light rounded" [value]="getCategory(category.key)"
+                         placeholder="Category name..."
+                         (change)="saveCategoriesForm({color: category.key, name: inputElement.value})">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+

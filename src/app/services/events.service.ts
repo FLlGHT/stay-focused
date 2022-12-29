@@ -18,6 +18,7 @@ export class EventsService {
         timeMax: to.toISOString(),
         singleEvents: true,
         orderBy: 'startTime',
+        maxResults: 2500
       })
   }
 }

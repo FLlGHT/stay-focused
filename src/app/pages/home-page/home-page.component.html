@@ -7,7 +7,7 @@
 
   </div>
 
-  <div class="py-4">
+  <div class="py-3">
     <h3 *ngIf="events" class="text-secondary">By events </h3>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
       <div *ngFor="let event of events | keyvalue : withoutComparison; let i = index">
@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  <div class="py-4">
+  <div class="py-3">
     <h3 *ngIf="categories" class="text-secondary">By categories </h3>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
       <div *ngFor="let category of categories | keyvalue : withoutComparison">

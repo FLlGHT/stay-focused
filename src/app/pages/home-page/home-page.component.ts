@@ -61,7 +61,7 @@ export class HomePageComponent implements OnInit {
 
       for (const event of events) {
         let color = event.colorId
-        let name = event.summary;
+        let name = event.summary.trim();
         let duration = this.duration(event.start.dateTime, event.end.dateTime)
 
         let eventTotal = eventMap.get(name) ? eventMap.get(name) : 0
@@ -70,6 +70,8 @@ export class HomePageComponent implements OnInit {
         let categoryTotal = categoryMap.get(color) ? categoryMap.get(color) : 0
         categoryMap.set(color, categoryTotal + duration)
       }
+
+      console.log(eventMap)
 
       this.events = new Map([...eventMap.entries()].sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1]))
       this.categories = new Map([...categoryMap.entries()].sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1]))

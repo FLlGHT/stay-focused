@@ -14,6 +14,11 @@ export class CategoryComponent {
     return COLORS.get(colorId)
   }
 
+  categoryName(colorId: string) : string | undefined {
+    let category = localStorage.getItem('color_' + colorId)
+    return category ? category : this.colorInfo(colorId)?.name
+  }
+
   colorStyle(colorId: string) : string {
     let color = this.colorInfo(colorId)
     return "background-color: " + color?.color

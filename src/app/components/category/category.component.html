@@ -2,7 +2,7 @@
   <div class="card-body text-truncate">
     <div class="d-flex">
       <p class="p-3 me-2 rounded-circle" [style]="colorStyle(category.key)"></p>
-      <h3>{{colorInfo(category.key)?.name}}</h3>
+      <h3>{{categoryName(category.key)}}</h3>
     </div>
     <p>{{category.value + ' min'}}</p>
   </div>

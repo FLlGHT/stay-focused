@@ -1,8 +1,8 @@
 <div class="col px-5">
   <h3 class="mb-0 text-secondary">Info </h3>
   <div *ngIf="stats">
-    <h5 class="px-2 mb-0 pt-3">Total time: <span class="text-warning">{{stats.totalTime + ' min'}}</span></h5>
-    <h5 class="px-2 mb-0">Productive time: <span class="text-warning">{{stats.productiveTime + ' min'}}</span></h5>
+    <h5 class="px-2 mb-0 pt-3">Total time: <span class="text-warning">{{toHoursAndMinutes(stats.totalTime)}}</span></h5>
+    <h5 class="px-2 mb-0">Productive time: <span class="text-warning">{{toHoursAndMinutes(stats.productiveTime)}}</span></h5>
     <h5 class="px-2">Percentage: <span class="text-warning">{{(stats.percentage | percent)}}</span></h5>
   </div>
 </div>

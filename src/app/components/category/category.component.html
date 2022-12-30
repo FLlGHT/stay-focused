@@ -4,6 +4,6 @@
       <p class="p-3 me-2 rounded-circle" [style]="colorStyle(category.key)"></p>
       <h3>{{categoryName(category.key)}}</h3>
     </div>
-    <p>{{category.value + ' min'}}</p>
+    <p>{{toHoursAndMinutes(category.value)}}</p>
   </div>
 </div>

@@ -1,8 +1,8 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {Stats} from "../../models/stats";
-import {Color, COLORS} from "../../models/colors";
 import {EventsService} from "../../services/events.service";
+import {Event} from "../../models/event";
 
 @Component({
   selector: 'app-home-page',
@@ -11,11 +11,13 @@ import {EventsService} from "../../services/events.service";
 })
 export class HomePageComponent implements OnInit {
 
-  events : Map<string, number> | undefined
+  events: Map<string, Event> | undefined
   categories: Map<string, number> | undefined
-  stats : Stats | undefined = undefined
+  stats: Stats | undefined = undefined
 
-  constructor(public authService: AuthService, private eventsService: EventsService, private zone: NgZone) {}
+  constructor(public authService: AuthService, private eventsService: EventsService, private zone: NgZone) {
+  }
+
   ngOnInit(): void {
     this.authService.isAuthenticated$.subscribe(isAuth => {
       if (isAuth)
@@ -30,19 +32,19 @@ export class HomePageComponent implements OnInit {
     this.categories = undefined
   }
 
-  atStartOfDay(date: Date) : Date {
+  atStartOfDay(date: Date): Date {
     let start = new Date(date)
     start.setHours(0, 0, 0, 0)
     return start
   }
 
-  atEndOfDay(date: Date) : Date {
+  atEndOfDay(date: Date): Date {
     let end = new Date(date)
     end.setHours(23, 59, 59, 999)
     return end
   }
 
-  duration(from: Date, to: Date) : number {
+  duration(from: Date, to: Date): number {
     let difference = new Date(to).getTime() - new Date(from).getTime()
     return Math.round(difference / 60000)
   }
@@ -54,18 +56,19 @@ export class HomePageComponent implements OnInit {
       });
   }
 
-  updateEvents(response: any, from : Date, to: Date) {
+  updateEvents(response: any, from: Date, to: Date) {
     this.zone.run(() => {
       const events = response.result.items;
       let eventMap = new Map(), categoryMap = new Map()
 
-      for (const event of events) {
-        let color = event.colorId
-        let name = event.summary.trim();
-        let duration = this.duration(event.start.dateTime, event.end.dateTime)
+      for (const calendarEvent of events) {
+        let color = calendarEvent.colorId
+        let name = calendarEvent.summary.trim();
+        let duration = this.duration(calendarEvent.start.dateTime, calendarEvent.end.dateTime)
 
-        let eventTotal = eventMap.get(name) ? eventMap.get(name) : 0
-        eventMap.set(name, eventTotal + duration)
+        let event: Event = eventMap.get(name) ? eventMap.get(name) : {color: color, duration: 0}
+        event.duration = event.duration + duration
+        eventMap.set(name, event)
 
         let categoryTotal = categoryMap.get(color) ? categoryMap.get(color) : 0
         categoryMap.set(color, categoryTotal + duration)
@@ -73,7 +76,7 @@ export class HomePageComponent implements OnInit {
 
       console.log(eventMap)
 
-      this.events = new Map([...eventMap.entries()].sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1]))
+      this.events = new Map([...eventMap.entries()].sort((firstEntry, secondEntry) => secondEntry[1].duration - firstEntry[1].duration))
       this.categories = new Map([...categoryMap.entries()].sort((firstEntry, secondEntry) => secondEntry[1] - firstEntry[1]))
       this.updateStats(from, to)
     });
@@ -83,8 +86,8 @@ export class HomePageComponent implements OnInit {
     let productiveTime = 0
 
     if (this.events) {
-      for (let [name, time] of this.events.entries()) {
-        productiveTime += time
+      for (let [name, event] of this.events.entries()) {
+        productiveTime += event.duration
       }
     }
 
@@ -104,7 +107,7 @@ export class HomePageComponent implements OnInit {
       this.loadEvents(event.from, event.to)
   }
 
-  isCurrently(from: Date, to: Date) : boolean {
+  isCurrently(from: Date, to: Date): boolean {
     return from.getHours() > 0 && new Date(from).toDateString() === new Date(to).toDateString()
   }
 }

@@ -27,12 +27,18 @@
           <div class="row row-cols-lg-2">
             <div *ngFor="let category of categories | keyvalue">
               <div class="col card bg-dark bg-gradient p-2">
-                <div class="me-2 row">
+                <div class="row g-2">
                   <p class="col-4">{{getColor(category.key)}}</p>
                   <h3 class="col-1 p-3 rounded-circle" [style]="colorStyle(category.key)"></h3>
-                  <input #inputElement type="text" class="ms-2 col-6 bg-dark bg-gradient text-light rounded" [value]="getCategory(category.key)"
+                  <input #inputTitle type="text" class="ms-2 col-5 bg-dark bg-gradient text-light rounded"
+                         [value]="getCategory(category.key)"
                          placeholder="Category name..."
-                         (change)="saveCategoriesForm({color: category.key, name: inputElement.value})">
+                         (change)="saveCategoryTitle({color: category.key, name: inputTitle.value})">
+                  <div class="col">
+                    <input #inputStatus class="form-check-input" type="checkbox"
+                           [checked]="isActive(category.key)"
+                           (change)="saveCategoryStatus(category.key, inputStatus.checked)">
+                  </div>
                 </div>
               </div>
             </div>

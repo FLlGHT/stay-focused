@@ -59,6 +59,8 @@ export class HomePageComponent implements OnInit {
   updateEvents(response: any, from: Date, to: Date) {
     this.zone.run(() => {
       const events = response.result.items;
+      let disabled = JSON.parse(localStorage.getItem('disabled') || '[]')
+
       let eventMap = new Map(), categoryMap = new Map()
 
       for (const calendarEvent of events) {
@@ -66,12 +68,14 @@ export class HomePageComponent implements OnInit {
         let name = calendarEvent.summary.trim();
         let duration = this.duration(calendarEvent.start.dateTime, calendarEvent.end.dateTime)
 
-        let event: Event = eventMap.get(name) ? eventMap.get(name) : {color: color, duration: 0}
-        event.duration = event.duration + duration
-        eventMap.set(name, event)
+        if (!disabled.includes(color)) {
+          let event: Event = eventMap.get(name) ? eventMap.get(name) : {color: color, duration: 0}
+          event.duration = event.duration + duration
+          eventMap.set(name, event)
 
-        let categoryTotal = categoryMap.get(color) ? categoryMap.get(color) : 0
-        categoryMap.set(color, categoryTotal + duration)
+          let categoryTotal = categoryMap.get(color) ? categoryMap.get(color) : 0
+          categoryMap.set(color, categoryTotal + duration)
+        }
       }
 
       console.log(eventMap)

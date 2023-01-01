@@ -53,12 +53,31 @@ export class SettingsPageComponent implements OnInit {
     }
   }
 
-  saveCategoriesForm(event: Category) {
-    localStorage.setItem('color_' + event.color, event.name)
+  saveCategoryTitle(category: Category) {
+    localStorage.setItem('color_' + category.color, category.name)
 
-    this.categoriesMessage = 'Category mapping update successfully'
+    this.categoriesMessage = 'Category title update successfully'
     setTimeout(() => this.categoriesMessage = '', 5000)
   }
+
+  saveCategoryStatus(category: string | undefined, isActive: any) {
+    let disabled = JSON.parse(localStorage.getItem('disabled') || '[]')
+
+    if (isActive)
+      disabled = this.removeElement(disabled, category)
+    else
+      disabled.push(category)
+
+    this.categoriesMessage = 'Category status update successfully'
+    setTimeout(() => this.categoriesMessage = '', 5000)
+
+    localStorage.setItem('disabled', JSON.stringify(disabled))
+  }
+
+  removeElement(disabled: any, toDelete: string | undefined) {
+    return disabled.filter((element: string | undefined) => element != toDelete)
+  }
+
 
   getColor(colorId: string | undefined): string | undefined {
     return COLORS.get(colorId)?.name
@@ -75,5 +94,10 @@ export class SettingsPageComponent implements OnInit {
   colorStyle(colorId: string | undefined): string {
     let color = this.colorInfo(colorId ? colorId : undefined)
     return "background-color: " + color?.color
+  }
+
+  isActive(category: string | undefined): boolean {
+    let disabled = JSON.parse(localStorage.getItem('disabled') || '[]')
+    return !disabled.includes(category)
   }
 }

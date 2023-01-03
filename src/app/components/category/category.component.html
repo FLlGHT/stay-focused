@@ -1,8 +1,8 @@
 <div class="col card bg-gradient bg-dark shadow-lg">
   <div class="card-body text-truncate">
-    <div class="d-flex">
+    <div class="d-flex align-items-center">
       <p class="p-3 me-2 rounded-circle" [style]="colorStyle(category.key)"></p>
-      <h3>{{categoryName(category.key)}}</h3>
+      <h5>{{categoryName(category.key)}}</h5>
     </div>
     <p>{{toHoursAndMinutes(category.value)}}</p>
   </div>

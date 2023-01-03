@@ -5,6 +5,7 @@ import {SettingsPageComponent} from "./pages/settings-page/settings-page.compone
 
 const routes: Routes = [
   {path: '', component: HomePageComponent},
+  {path: 'STAYFOCUSED', component: HomePageComponent},
   {path: 'settings', component: SettingsPageComponent}
 ]
 
